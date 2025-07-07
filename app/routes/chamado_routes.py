@@ -37,7 +37,8 @@ def get_chamados():
                 "Feedback": row[8],
                 "NomeMaquina": row[9],
                 "IDTecnico": row[10],
-                "IDFuncionario": row[11]
+                "IDFuncionario": row[11],
+                "JustificativaCancelamento": row[12]
             } for row in rows
         ]
         return jsonify(data)
@@ -120,17 +121,19 @@ def atualizar_status_chamado(id_chamado):
 @chamados.put('/chamados/<int:id_chamado>/cancelar')
 def cancelar_chamado(id_chamado):
     try:
-        # ID do status "Cancelado" (você pode mudar esse ID se for diferente)
-        STATUS_CANCELADO = 4
+        data = request.get_json()
+        justificativa = data.get("Justificativa", "")
+
+        STATUS_CANCELADO = 4  
 
         conn = get_connection()
         cursor = conn.cursor()
 
         cursor.execute("""
             UPDATE Chamado
-            SET IDStatus = %s
+            SET IDStatus = %s, JustificativaCancelamento = %s
             WHERE IDChamado = %s
-        """, (STATUS_CANCELADO, id_chamado))
+        """, (STATUS_CANCELADO, justificativa, id_chamado))
 
         conn.commit()
         return jsonify({"mensagem": "Chamado cancelado com sucesso!"}), 200
@@ -138,28 +141,6 @@ def cancelar_chamado(id_chamado):
     except Exception as e:
         print(e)
         return jsonify({"erro": "Erro ao cancelar chamado"}), 500
-    finally:
-        cursor.close()
-        conn.close()
-
-@chamados.get('/chamados/criar_coluna_justificativa')
-def criar_coluna_justificativa():
-    try:
-        conn = get_connection()
-        cursor = conn.cursor()
-
-        cursor.execute("""
-            ALTER TABLE Chamado
-            ADD COLUMN JustificativaCancelamento TEXT NULL
-        """)
-
-        conn.commit()
-        return jsonify({"mensagem": "Coluna JustificativaCancelamento criada com sucesso!"})
-
-    except Exception as e:
-        print(e)
-        return jsonify({"erro": "Erro ao criar coluna: " + str(e)}), 500
-
     finally:
         cursor.close()
         conn.close()
