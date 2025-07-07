@@ -5,7 +5,7 @@ from .database import get_connection
 def create_app():
     app = Flask(__name__)
     app.secret_key = 'hemaju'
-    CORS(app, origins=["http://localhost:1212", "https://batback-1.onrender.com"], supports_credentials=True)
+    CORS(app, origins="http://localhost:1212", supports_credentials=True)
 
     from .routes.auth_routes import auth
     from .routes.status_routes import status
