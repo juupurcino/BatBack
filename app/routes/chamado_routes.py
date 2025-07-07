@@ -141,3 +141,27 @@ def cancelar_chamado(id_chamado):
     finally:
         cursor.close()
         conn.close()
+
+@chamados.get('/chamados/criar_coluna_justificativa')
+def criar_coluna_justificativa():
+    try:
+        conn = get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            ALTER TABLE Chamado
+            ADD COLUMN JustificativaCancelamento TEXT NULL
+        """)
+
+        conn.commit()
+        return jsonify({"mensagem": "Coluna JustificativaCancelamento criada com sucesso!"})
+
+    except Exception as e:
+        print(e)
+        return jsonify({"erro": "Erro ao criar coluna: " + str(e)}), 500
+
+    finally:
+        cursor.close()
+        conn.close()
+
+
