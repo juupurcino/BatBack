@@ -14,7 +14,9 @@ def get_chamados():
         cursor.execute("""
             SELECT 
                 C.IDChamado, C.Descricao, UT.Nome AS Tecnico, UF.Nome AS Funcionario,
-                C.DataCriacao, S.Status, D.Nivel, C.IDMaquina, C.Feedback, M.Descricao AS NomeMaquina, C.IDTecnico, C.IDFuncionario
+                C.DataCriacao, S.Status, D.Nivel, C.IDMaquina, C.Feedback, 
+                M.Descricao AS NomeMaquina, C.IDTecnico, C.IDFuncionario,
+                C.JustificativaCancelamento
             FROM Chamado C
             INNER JOIN Maquina M ON M.ID = C.IDMaquina
             INNER JOIN Usuario UT ON UT.RUF = C.IDTecnico 
